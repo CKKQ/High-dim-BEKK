@@ -1,2 +1,96 @@
-# High-dim-BEKK
-high-dim-bekk
+# High-dimensional BEKK — Code Overview
+
+This repository implements **high-dimensional conditional covariance modeling** and **portfolio backtesting**.  
+Your **main research methods live under `core/`**. Methods under `backtest/benchmarks/` are **secondary (comparison/benchmark only)**.
+
+---
+
+## Repository Layout (by role)
+
+---
+
+## Module Guide
+
+### 1) `core/` (Main Methods)
+
+- **`matrix_ops.py`**  
+  Foundational linear-algebra helpers:  
+  - `vech` / `vech_to_mat` (upper-triangular vectorization of symmetric matrices and its inverse)  
+  - `construct_D_N` (mapping consistent with `vech`)  
+  - `project_to_psd` (stable PSD projection + symmetrization)
+
+- **`vech_utils.py`**  
+  VECH/BEKK-related dataset builders and utilities (e.g., truncated datasets, return-to-design transformations).
+
+- **`kron_transform.py`**  
+  Kronecker and permutation transforms used by BEKK/VECH:  
+  - `build_kron_indices`, `transformation_kron_torch`, `permutation_torch`
+
+- **`projection.py`**  
+  Constraints/regularizers:  
+  - Hard truncation, row top-k pruning, approximate quantiles, nuclear-norm tools  
+  - Used to enforce robustness and sparse/low-rank structure at scale
+
+- **`optimization.py`**  
+  Core solvers:  
+  - `padding`, `fista_algorithm`, `_power_L_op`  
+  - Ties together objectives with structure operators from `kron_transform` / `projection` / `matrix_ops`
+
+- **`estimation.py`**  
+  Parameter/path estimation & recursion:  
+  - e.g., `estimate_A_dict_from_R_list`, `estimate_K_dict_from_Psi_list`,  
+    `compute_sigma_sequence_from_bekk_arch`, `omega_from_B_est`  
+  - Produces one-step-ahead covariance paths Σ_t consumed by backtests
+
+> **Summary:** `core/` contains your **research implementation** (structure + regularization + optimization + estimation).  
+> Its output is Σ_t used directly by the backtesting layer.
+
+---
+
+### 2) `backtest/` (Backtests & Evaluation)
+
+- **`bekk_pipeline.py`**  
+  Main pipeline:  
+  - Calls methods in `core/` to produce rolling (expanding/fixed window) **one-step-ahead Σ_t**  
+  - Provides **GMV** backtests and metrics (AV/SD/IR), often with a robust
+    `gmv_weights_from_cov_torch` (adaptive diagonal loading + `pinv` fallback)
+
+- **`benchmarks/` (Comparison methods; **secondary**)**
+  - **`ccc_dcc.py`**  
+    - Per-asset **GARCH(1,1)** (EBE)  
+    - Empirical correlation + **nonlinear shrinkage** (QuEST/RIE proxy)  
+    - **DCC-NL** (corrected recursion) for R_t  
+    - Rolling backtests: `rolling_backtest_cccnl` / `rolling_backtest_dccnl`  
+      (Σ_t = D_t R_t D_t → GMV → AV/SD/IR)  
+    - Note: `rolling_backtest_cccnl` is aligned with the `dccnl` workflow; legacy `ebe_ccc_pipeline` was removed.
+  - **`factor_garch.py`**  
+    - **Latent (PCA) factor** route (Ahn–Horenstein ER/GR for K; `_pca_factors_from_returns`)  
+    - Factor-level **GARCH(1,1)+CCC** → factor variances `H` & correlation `Γ`  
+    - Residual covariance **adaptive thresholding** to ensure PSD (`Σ_u`)  
+    - Assemble observed-space Σ_y(t) as **B D_t Γ D_t Bᵀ + Σ_u**  
+    - Rolling backtest: `rolling_backtest_factor_garch_latent(...)`  
+      (same signature and rolling style as `dccnl`)
+
+> **Summary:** Benchmarks under `backtest/benchmarks/` are for **comparison only** and are intentionally not at the same level as your main methods.
+
+---
+
+### 3) `data/` (if present)
+Data loading / preprocessing scripts: CSV/Parquet readers, date alignment, centering, percentage→decimal conversion, etc.
+
+### 4) `utils/` (if present)
+Generic helpers: device selection (e.g., `get_device()`), CUDA sync, hashing for caches, etc.
+
+---
+
+## Quick Start
+
+> **Tip (no packaging assumed):**  
+> Run scripts from the project root (or the script’s folder) so relative imports like `from backtest.benchmarks.ccc_dcc import ...` resolve naturally.  
+> Alternatively, set `PYTHONPATH=.` when running.
+
+### A. Run the main pipeline (based on your core methods)
+```bash
+# From the project root, switch into backtest and run your pipeline:
+cd High-dim-BEKK/backtest
+python bekk_pipeline.py
