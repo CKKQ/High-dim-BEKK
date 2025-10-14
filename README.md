@@ -70,6 +70,8 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 ### 3) `data/`
 
+-**`preprocess.py`**provides lightweight helpers to load and clean CSV returns, build VECH design rows, and optionally subsample returns for faster experiments.
+
 This folder also contains the **raw datasets used in the real-data experiments**:
 
 - `100_Portfolios_daily.csv` — raw data for the 100 size–investment portfolios (as downloaded).  
