@@ -70,7 +70,8 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 ### 3) `data/`
 
--**`preprocess.py`**provides lightweight helpers to load and clean CSV returns, build VECH design rows, and optionally subsample returns for faster experiments.
+- **`preprocess.py`** — Data helpers  
+  - Loads/cleans CSV returns (flexible `Date`, fill/dropna, **percent→decimal**), builds VECH design rows, and supports optional subsampling.
 
 This folder also contains the **raw datasets used in the real-data experiments**:
 
