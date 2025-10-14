@@ -7,6 +7,7 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 ## Repository Layout
 
+```text
 High-dim-BEKK/
 ├─ core/                  # Main methods (research contributions)
 ├─ backtest/              # Rolling evaluation & metrics
@@ -14,7 +15,6 @@ High-dim-BEKK/
 │  └─ benchmarks/         # Comparison methods (secondary)
 ├─ data/                  # Raw datasets + optional loaders/preprocessing
 └─ utils/                 # Generic helpers (device, sync, hashing, etc.)
-
 
 ---
 
