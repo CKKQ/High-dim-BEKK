@@ -40,7 +40,7 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
   Parameter/path estimation & recursion:  
   - e.g., `estimate_A_dict_from_R_list`, `estimate_K_dict_from_Psi_list`,  
     `compute_sigma_sequence_from_bekk_arch`, `omega_from_B_est`  
-  - Produces one-step-ahead covariance paths Σ_t consumed by backtests
+  - Produces one-step-ahead covariance paths $\Sigma_t$ consumed by backtests
 
 > **Summary:** `core/` contains your **research implementation** (structure + regularization + optimization + estimation).  
 > Its output is $\Sigma_t$ used directly by the backtesting layer.
@@ -51,7 +51,7 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
 
 - **`bekk_pipeline.py`**  
   Main pipeline:  
-  - Calls methods in `core/` to produce rolling (expanding/fixed window) **one-step-ahead Σ_t**  
+  - Calls methods in `core/` to produce rolling (expanding/fixed window) **one-step-ahead $\Sigma_t$**  
   - Provides **GMV** backtests and metrics (AV/SD/IR), often with a robust
     `gmv_weights_from_cov_torch` (adaptive diagonal loading + `pinv` fallback)
 
@@ -59,14 +59,14 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
   - **`ccc_dcc.py`**  
     - Per-asset **GARCH(1,1)** (EBE)  
     - Empirical correlation + **nonlinear shrinkage** (QuEST/RIE proxy)  
-    - **DCC-NL** (corrected recursion) for R_t  
+    - **DCC-NL** (corrected recursion) for $R_t$  
     - Rolling backtests: `rolling_backtest_cccnl` / `rolling_backtest_dccnl`  
       ($\Sigma_t = D_t R_t D_t$ → GMV → AV/SD/IR)  
     - Note: `rolling_backtest_cccnl` is aligned with the `dccnl` workflow; legacy `ebe_ccc_pipeline` was removed.
   - **`factor_garch.py`**  
     - **Latent (PCA) factor** route (Ahn–Horenstein ER/GR for K; `_pca_factors_from_returns`)  
-    - Factor-level **GARCH(1,1)+CCC** → factor variances `$H$` & correlation `$\Gamma$`  
-    - Residual covariance **adaptive thresholding** to ensure PSD (`$\Sigma_u$`)  
+    - Factor-level **GARCH(1,1)+CCC** → factor variances $H$ & correlation $\Gamma$  
+    - Residual covariance **adaptive thresholding** to ensure PSD ($\Sigma_u$)  
     - Assemble observed-space $\Sigma_y(t)$ as **$B D_t \Gamma D_t B^T + \Sigma_u$**  
     - Rolling backtest: `rolling_backtest_factor_garch_latent(...)`  
       (same signature and rolling style as `dccnl`)
