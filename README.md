@@ -30,7 +30,7 @@ Our **main research methods are in `core/`**. Methods under `backtest/benchmarks
   Core solvers tying objectives to structure operators:  
   - `padding`, `fista_algorithm`, `_power_L_op`
     - **`padding(...)` — Optimized padded operator**  
-      Returns the **optimized padded matrix** with loss_type can be choosen as `nuclear` or `eigsplit`; for `eigsplit` the loss is $L = -sum_{j=1}^{K} lambda_j(\cdot) + sum_{j=K+1}^{n^2} lambda_j(\cdot)^2$.
+      Returns the **optimized padded matrix** with loss_type can be choosen as `nuclear` or `eigsplit`; for `eigsplit` the loss is $L = -\sum_{j=1}^{K} lambda_j(\cdot) + \sum_{j=K+1}^{n^2} lambda_j(\cdot)^2$.
 
     - **`fista_algorithm(...)` — VECH estimator**  
       Returns the **VECH coefficients** (accelerated proximal gradient on the VECH regression built from `vech(rrᵀ)`), ready for `estimation.py` to produce the path of \( \Sigma_t \).
