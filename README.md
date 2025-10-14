@@ -75,10 +75,16 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
 
 ---
 
-### 3) `data/` (if present)
-Data loading / preprocessing scripts: CSV/Parquet readers, date alignment, centering, percentage→decimal conversion, etc.
+### 3) `data/`
 
-### 4) `utils/` (if present)
+This folder also contains the **raw datasets used in the real-data experiments**:
+
+- `100_Portfolios_daily.csv` — raw daily returns for the 100 size–investment portfolios (as downloaded; no preprocessing).
+- `17_Industry_Portfolios.csv` — raw returns for the 17 industry portfolios (as downloaded; no preprocessing).
+
+These files are read by the loaders and then processed (date alignment, centering, and, when needed, percentage→decimal conversion) during the experiments.
+
+### 4) `utils/`
 Generic helpers: device selection (e.g., `get_device()`), CUDA sync, hashing for caches, etc.
 
 ---
