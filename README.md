@@ -5,7 +5,7 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
 
 ---
 
-## Repository Layout (by role)
+## Repository Layout
 
 ---
 
@@ -23,7 +23,7 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
   VECH/BEKK-related dataset builders and utilities (e.g., truncated datasets, return-to-design transformations).
 
 - **`kron_transform.py`**  
-  Kronecker and permutation transforms used by BEKK/VECH:  
+  Kronecker padding and permutation transforms used by BEKK/VECH:  
   - `build_kron_indices`, `transformation_kron_torch`, `permutation_torch`
 
 - **`projection.py`**  
@@ -43,7 +43,7 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
   - Produces one-step-ahead covariance paths Σ_t consumed by backtests
 
 > **Summary:** `core/` contains your **research implementation** (structure + regularization + optimization + estimation).  
-> Its output is Σ_t used directly by the backtesting layer.
+> Its output is $\Sigma_t$ used directly by the backtesting layer.
 
 ---
 
