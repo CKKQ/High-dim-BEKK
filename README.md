@@ -61,13 +61,13 @@ Your **main research methods live under `core/`**. Methods under `backtest/bench
     - Empirical correlation + **nonlinear shrinkage** (QuEST/RIE proxy)  
     - **DCC-NL** (corrected recursion) for R_t  
     - Rolling backtests: `rolling_backtest_cccnl` / `rolling_backtest_dccnl`  
-      (Σ_t = D_t R_t D_t → GMV → AV/SD/IR)  
+      ($\Sigma_t = D_t R_t D_t$ → GMV → AV/SD/IR)  
     - Note: `rolling_backtest_cccnl` is aligned with the `dccnl` workflow; legacy `ebe_ccc_pipeline` was removed.
   - **`factor_garch.py`**  
     - **Latent (PCA) factor** route (Ahn–Horenstein ER/GR for K; `_pca_factors_from_returns`)  
-    - Factor-level **GARCH(1,1)+CCC** → factor variances `H` & correlation `Γ`  
-    - Residual covariance **adaptive thresholding** to ensure PSD (`Σ_u`)  
-    - Assemble observed-space Σ_y(t) as **B D_t Γ D_t Bᵀ + Σ_u**  
+    - Factor-level **GARCH(1,1)+CCC** → factor variances `$H$` & correlation `$\Gamma$`  
+    - Residual covariance **adaptive thresholding** to ensure PSD (`$\Sigma_u$`)  
+    - Assemble observed-space $\Sigma_y(t)$ as **$B D_t \Gamma D_t B^T + \Sigma_u$**  
     - Rolling backtest: `rolling_backtest_factor_garch_latent(...)`  
       (same signature and rolling style as `dccnl`)
 
@@ -82,15 +82,3 @@ Data loading / preprocessing scripts: CSV/Parquet readers, date alignment, cente
 Generic helpers: device selection (e.g., `get_device()`), CUDA sync, hashing for caches, etc.
 
 ---
-
-## Quick Start
-
-> **Tip (no packaging assumed):**  
-> Run scripts from the project root (or the script’s folder) so relative imports like `from backtest.benchmarks.ccc_dcc import ...` resolve naturally.  
-> Alternatively, set `PYTHONPATH=.` when running.
-
-### A. Run the main pipeline (based on your core methods)
-```bash
-# From the project root, switch into backtest and run your pipeline:
-cd High-dim-BEKK/backtest
-python bekk_pipeline.py
