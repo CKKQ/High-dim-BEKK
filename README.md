@@ -15,6 +15,7 @@ High-dim-BEKK/
 │  └─ benchmarks/         # Comparison methods (secondary)
 ├─ data/                  # Raw datasets + optional loaders/preprocessing
 └─ utils/                 # Generic helpers (device, sync, hashing, etc.)
+```
 
 ---
 
