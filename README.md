@@ -5,20 +5,6 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 ---
 
-## Repository Layout
-
-```text
-High-dim-BEKK/
-├─ core/                  # Main methods (research contributions)
-├─ backtest/              # Rolling evaluation & metrics
-│  ├─ bekk_pipeline.py    # Main pipeline: rolling Σ_t + GMV backtests
-│  └─ benchmarks/         # Comparison methods (secondary)
-├─ data/                  # Raw datasets + optional loaders/preprocessing
-└─ utils/                 # Generic helpers (device, sync, hashing, etc.)
-```
-
----
-
 ## Module Guide
 
 ### 1) `core/` (Main Methods)
