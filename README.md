@@ -1,7 +1,7 @@
 # High-dimensional BEKK — Code Overview
 
 This repository implements **high-dimensional conditional covariance modeling** and **portfolio backtesting**.  
-Your **main research methods are in `core/`**. Methods under `backtest/benchmarks/` are **secondary (comparison only)**.
+Our **main research methods are in `core/`**. Methods under `backtest/benchmarks/` are **secondary (comparison only)**.
 
 ---
 
@@ -28,7 +28,12 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 - **`optimization.py`**  
   Core solvers tying objectives to structure operators:  
-  - `padding`, `fista_algorithm`, `_power_L_op`  
+  - `padding`, `fista_algorithm`, `_power_L_op`
+    - **`padding(...)` — Optimized padded operator**  
+      Returns the **optimized, structure-aware padded matrix** (sparse/low-rank), used to build one-step-ahead covariances; integrates `projection` and `kron_transform` internally.
+
+    - **`fista_algorithm(...)` — VECH estimator**  
+      Returns the **VECH coefficients** (accelerated proximal gradient on the VECH regression built from `vech(rrᵀ)`), ready for `estimation.py` to produce the path of \( \Sigma_t \).
   - Integrates `kron_transform` / `projection` / `matrix_ops`
 
 - **`estimation.py`**  
@@ -46,25 +51,25 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 - **`bekk_pipeline.py`** — Main pipeline  
   - Calls `core/` methods to produce rolling (expanding/fixed window) **one-step-ahead $\,\Sigma_t\,$**  
   - Provides **GMV** backtests and metrics (AV/SD/IR), often via a robust
-    `gmv_weights_from_cov_torch` (adaptive diagonal loading + `pinv` fallback)
+    `gmv_weights_from_cov_torch` 
 
-- **`benchmarks/`** — Comparison methods (secondary)  
+- **`benchmarks/`** — Comparison methods
   - **`ccc_dcc.py`**  
     - Per-asset **GARCH(1,1)** (EBE)  
-    - Empirical correlation + **nonlinear shrinkage** (QuEST/RIE proxy)  
-    - **DCC-NL** (corrected recursion) for $R_t$  
+    - Empirical correlation + **nonlinear shrinkage**
+    - **DCC-NL** for $R_t$  
     - Rolling backtests: `rolling_backtest_cccnl` / `rolling_backtest_dccnl`  
       ($\Sigma_t = D_t\,R_t\,D_t \;\rightarrow\;$ GMV $\rightarrow$ AV/SD/IR)  
-    - Note: `rolling_backtest_cccnl` is aligned with the `dccnl` workflow; the legacy `ebe_ccc_pipeline` was removed.
+    - Note: `rolling_backtest_cccnl` is aligned with the `dccnl` workflow
   - **`factor_garch.py`**  
-    - **Latent (PCA) factor** route (Ahn–Horenstein ER/GR for $K$; `_pca_factors_from_returns`)  
+    - **Latent (PCA) factor** route (Ahn–Horenstein ER/GR for $K$; `_pca_factors_from_returns` for ​​factor extraction​​)
     - Factor-level **GARCH(1,1)+CCC** → factor variances $H$ & correlation $\Gamma$  
     - Residual covariance **adaptive thresholding** to ensure PSD ($\Sigma_u$)  
     - Assemble observed-space $\Sigma_y(t)$ as **$B\,D_t\,\Gamma\,D_t\,B^\top + \Sigma_u$**  
     - Rolling backtest: `rolling_backtest_factor_garch_latent(...)`  
       (same signature and rolling style as `dccnl`)
 
-> **Summary:** items in `backtest/benchmarks/` are **for comparison only** and intentionally not at the same level as your main methods.
+> **Summary:** items in `backtest/benchmarks/` are **for comparison only**.
 
 ---
 
@@ -75,8 +80,8 @@ Your **main research methods are in `core/`**. Methods under `backtest/benchmark
 
 This folder also contains the **raw datasets used in the real-data experiments**:
 
-- `100_Portfolios_daily.csv` — raw data for the 100 size–investment portfolios (as downloaded).  
-- `17_Industry_Portfolios.csv` — raw data for the 17 industry portfolios (as downloaded).
+- `100_Portfolios_daily.csv` — raw data for the 100 size–investment portfolios.  
+- `17_Industry_Portfolios.csv` — raw data for the 17 industry portfolios.
 
 These files are read by the loaders and then processed during experiments (date alignment, centering, and, when needed, percentage→decimal conversion).
 
