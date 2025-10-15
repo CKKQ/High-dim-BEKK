@@ -4,10 +4,9 @@ import random
 import math
 from core.matrix_ops import vech
 
-def load_centered_log_returns_from_csv(
+def load_centered_returns_from_csv(
     csv_path: str,
     keep_first_k: int | None = None,
-    fill_method: str = "ffill",
     dropna: bool = True,
 ):
     df = pd.read_csv(csv_path)
@@ -36,16 +35,16 @@ def load_centered_log_returns_from_csv(
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    if fill_method == "ffill":
-        df = df.ffill()
-    elif fill_method == "bfill":
-        df = df.bfill()
     if dropna:
         df = df.dropna(how="any")
 
     df = df * 0.01
     try:
         print("[LOAD] Scaled returns by 0.01: treating input as percent, using decimal downstream.")
+    except Exception:
+        pass
+    try:
+        print(f"[LOAD] Applied direct-drop for missing values (no ffill/bfill). Remaining rows: {len(df)}")
     except Exception:
         pass
     df_ret = df.copy()
