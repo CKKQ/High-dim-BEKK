@@ -80,8 +80,8 @@ Our **main research methods are in `core/`**. Methods under `backtest/benchmarks
 
 This folder also contains the **raw datasets used in the real-data experiments**:
 
-- `100_Portfolios_daily.csv` — raw data for the 100 size–investment portfolios.  
 - `17_Industry_Portfolios.csv` — raw data for the 17 industry portfolios.
+- `100_Portfolios_daily.csv` — raw data for the 100 size–investment portfolios. 
 
 These files are read by the loaders and then processed during experiments (date alignment, centering, and, when needed, percentage→decimal conversion).
 
